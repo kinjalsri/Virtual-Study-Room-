@@ -1,12 +1,8 @@
 package main.services;
 
 import main.models.Timer;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class TimerService {
-    private ScheduledExecutorService scheduler;
     private boolean isRunning = false;
 
     public void startTimer(Timer timer) {
@@ -16,30 +12,30 @@ public class TimerService {
         }
 
         isRunning = true;
-        scheduler = Executors.newScheduledThreadPool(1);
+        System.out.println("⏳ Timer started for " + timer.getDuration() + " minutes.");
 
-        for (int i = 0; i < timer.getDuration(); i++) {
-            int timeLeft = timer.getDuration() - i;
-            scheduler.schedule(() -> {
-                if (isRunning) {
-                    System.out.println("⏳ Time left: " + timeLeft + " minutes");
-                }
-            }, i, TimeUnit.MINUTES);
+        for (int i = timer.getDuration(); i > 0; i--) {
+            if (!isRunning) {
+                System.out.println("⏸ Timer stopped.");
+                return;
+            }
+            System.out.println("⏳ Time left: " + i + " minutes");
+
+            try {
+                Thread.sleep(60000); // Wait for 1 minute (60,000 milliseconds)
+            } catch (InterruptedException e) {
+                System.out.println("⚠️ Timer interrupted.");
+                return;
+            }
         }
 
-        scheduler.schedule(() -> {
-            if (isRunning) {
-                System.out.println("🎉 Time's up!");
-                isRunning = false;
-            }
-        }, timer.getDuration(), TimeUnit.MINUTES);
+        if (isRunning) {
+            System.out.println("🎉 Time's up!");
+        }
+        isRunning = false;
     }
 
     public void stopTimer() {
-        if (scheduler != null) {
-            scheduler.shutdownNow();
-            isRunning = false;
-            System.out.println("⏸ Timer Stopped.");
-        }
+        isRunning = false;
     }
 }

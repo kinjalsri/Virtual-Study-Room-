@@ -36,11 +36,11 @@ public class Main {
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine(); 
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter timer duration (minutes): ");
+                    System.out.print("Enter timer duration (minutes) (5,10,20,25,30,50): ");
                     int duration = scanner.nextInt();
                     timerService.startTimer(new Timer(duration));
                     break;
